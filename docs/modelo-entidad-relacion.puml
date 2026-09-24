@@ -1,0 +1,134 @@
+@startuml modelo_entidad_relacion
+
+hide circle
+skinparam linetype ortho
+skinparam shadowing false
+skinparam rectangle {
+  BackgroundColor #F5F7FA
+  BorderColor #1F4E79
+}
+
+entity CLIENTE {
+  id_cliente      PK
+  dpi             UQ
+  nombre
+  telefono
+  email
+  saldo_puntos
+  estado
+  fecha_registro
+}
+
+entity PEDIDO {
+  id_pedido        PK
+  id_cliente       FK
+  fecha_pedido
+  subtotal
+  total
+  puntos_generados
+  estado
+}
+
+entity DETALLE_PEDIDO {
+  id_detalle      PK
+  id_pedido       FK
+  tipo_item
+  id_producto     FK
+  id_menu         FK
+  cantidad
+  precio_unitario
+  subtotal
+  puntos
+}
+
+entity PAGO {
+  id_pago           PK
+  id_pedido         FK
+  tipo_pago
+  monto
+  efectivo_recibido
+  cambio
+  referencia
+  estado
+  fecha_pago
+}
+
+entity PRODUCTO {
+  id_producto     PK
+  codigo          UQ
+  nombre
+  categoria
+  precio_unitario
+  existencia
+  estado
+}
+
+entity MENU {
+  id_menu         PK
+  codigo          UQ
+  nombre
+  precio_menu
+  estado
+}
+
+entity DETALLE_MENU {
+  id_menu         PK, FK
+  id_producto     PK, FK
+  cantidad
+}
+
+entity RECOMPENSA {
+  id_recompensa   PK
+  codigo          UQ
+  nombre
+  tipo_item
+  id_producto     FK
+  id_menu         FK
+  puntos_necesarios
+  estado
+}
+
+entity MOVIMIENTO_PUNTOS {
+  id_movimiento     PK
+  id_cliente        FK
+  tipo_movimiento
+  puntos
+  saldo_resultante
+  referencia
+  fecha_movimiento
+}
+
+entity CANJE {
+  id_canje        PK
+  id_cliente      FK
+  id_recompensa   FK
+  puntos_usados
+  fecha_canje
+}
+
+entity MOVIMIENTO_INVENTARIO {
+  id_movimiento       PK
+  id_producto         FK
+  tipo_movimiento
+  cantidad
+  existencia_anterior
+  existencia_nueva
+  referencia
+  fecha_movimiento
+}
+
+CLIENTE ||--o{ PEDIDO : "realiza"
+CLIENTE ||--o{ MOVIMIENTO_PUNTOS : "acumula"
+CLIENTE ||--o{ CANJE : "canjea"
+PEDIDO ||--|{ DETALLE_PEDIDO : "se compone de"
+PEDIDO ||--o| PAGO : "se cobra con"
+DETALLE_PEDIDO }o--|| PRODUCTO : "PRODUCTO"
+DETALLE_PEDIDO }o--|| MENU : "MENU"
+DETALLE_MENU }o--|| PRODUCTO : "consume"
+DETALLE_MENU }o--|| MENU : "compone"
+RECOMPENSA }o--o| PRODUCTO : "entrega"
+RECOMPENSA }o--o| MENU : "entrega"
+PRODUCTO ||--o{ MOVIMIENTO_INVENTARIO : "se mueve"
+CANJE }o--|| RECOMPENSA : "usa"
+
+@enduml

@@ -1,0 +1,62 @@
+@startuml casos_uso
+
+left to right direction
+skinparam shadowing false
+
+actor Cliente
+actor Vendedor
+actor Sistema
+
+rectangle "Pan, Puntos y Premios" {
+  usecase "UC-01 Registrar cliente" as UC01
+  usecase "UC-02 Consultar saldo de puntos" as UC02
+  usecase "UC-03 Registrar pedido" as UC03
+  usecase "UC-04 Cobrar pedido" as UC04
+  usecase "UC-05 Entregar pedido" as UC05
+  usecase "UC-06 Anular pedido" as UC06
+  usecase "UC-07 Canjear recompensa" as UC07
+  usecase "UC-08 Abastecer inventario" as UC08
+  usecase "UC-09 Administrar productos y menus" as UC09
+  usecase "UC-10 Administrar clientes" as UC10
+  usecase "UC-11 Generar reportes" as UC11
+  usecase "UC-12 Consultar puntos desde Android" as UC12
+  usecase "UC-13 Inactivar cliente" as UC13
+}
+
+Vendedor --> UC01
+Vendedor --> UC03
+Vendedor --> UC04
+Vendedor --> UC05
+Vendedor --> UC06
+Vendedor --> UC07
+Vendedor --> UC08
+Vendedor --> UC09
+Vendedor --> UC10
+Vendedor --> UC11
+Vendedor --> UC13
+
+Vendedor --> UC02
+Sistema --> UC02
+Cliente --> UC12
+
+UC04 .> UC03 : <<include>>
+UC04 .> UC03 : <<include>>
+UC05 .> UC04 : <<extend>>
+UC06 .> UC03 : <<extend>>
+UC07 .> UC02 : <<include>>
+
+note right of UC04
+  Al cobrar se descuentan
+  las existencias y se
+  acreditan los puntos
+  en una sola transaccion.
+end note
+
+note right of UC07
+  Se descuentan puntos,
+  se entrega el producto
+  o menu y se registra
+  el canje.
+end note
+
+@enduml

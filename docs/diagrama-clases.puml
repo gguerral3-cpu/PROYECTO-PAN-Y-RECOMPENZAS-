@@ -1,0 +1,147 @@
+@startuml diagrama_clases
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+abstract class ItemVenta {
+  -idItem : int
+  -codigo : String
+  -descripcion : String
+  -precioUnitario : double
+  -cantidad : int
+  +calcularPuntos() : int
+  +unidadesDeInventario() : Map<Integer,Integer>
+  +getTipoItem() : String
+  +getDetalleComposicion() : String
+  +getSubtotal() : double
+}
+
+class ProductoIndividual {
+  -producto : Producto
+  +getProducto() : Producto
+  +getExistenciaDisponible() : int
+}
+
+class MenuCompleto {
+  -menu : Menu
+  +getComponentes() : List<ComponenteMenu>
+}
+
+class Producto {
+  -idProducto : int
+  -codigo : String
+  -nombre : String
+  -categoria : Categoria
+  -precioUnitario : double
+  -existencia : int
+  -estado : EstadoRegistro
+  +crearItem(cantidad) : ProductoIndividual
+  +tieneExistencias(requeridas) : boolean
+}
+
+class Menu {
+  -idMenu : int
+  -codigo : String
+  -nombre : String
+  -precioMenu : double
+  -estado : EstadoRegistro
+  -componentes : List<ComponenteMenu>
+  +PUNTOS_POR_MENU : int = 8
+  +crearItem(cantidad) : MenuCompleto
+  +agregarComponente(componente) : void
+}
+
+class ComponenteMenu {
+  -idProducto : int
+  -cantidad : int
+  -costo : double
+}
+
+class Pedido {
+  -idPedido : int
+  -fechaPedido : Date
+  -subtotal : double
+  -total : double
+  -puntosGenerados : int
+  -estado : EstadoPedido
+  -items : List<ItemVenta>
+  -pago : Pago
+  +registrarPago(pago) : void
+  +calcularTotal() : double
+}
+
+class Cliente {
+  -idCliente : int
+  -dpi : String
+  -nombre : String
+  -telefono : String
+  -email : String
+  -saldoPuntos : int
+  -estado : EstadoRegistro
+  +tienePuntosSuficientes(costo) : boolean
+}
+
+class Pago {
+  -idPago : int
+  -tipo : TipoPago
+  -monto : double
+  -efectivoRecibido : Double
+  -cambio : Double
+  -referencia : String
+  -estado : EstadoPago
+  +enEfectivo(monto, recibido) : Pago
+  +conTarjeta(monto, referencia) : Pago
+}
+
+class Canje {
+  -idCanje : int
+  -puntosUsados : int
+  -fechaCanje : Date
+}
+
+class Recompensa {
+  -idRecompensa : int
+  -codigo : String
+  -nombre : String
+  -puntosNecesarios : int
+  -estado : EstadoRegistro
+}
+
+class Reporte {
+  -titulo : String
+  -columnas : List<String>
+  -filas : List<List<Object>>
+  +getCantidadFilas() : int
+}
+
+enum Categoria
+enum EstadoRegistro
+enum EstadoPedido
+enum EstadoPago
+enum TipoPago
+enum TipoItem
+enum MovimientoPuntos.Tipo
+enum MovimientoInventario.Tipo
+
+ItemVenta <|-- ProductoIndividual
+ItemVenta <|-- MenuCompleto
+ProductoIndividual --> Producto
+MenuCompleto --> Menu
+Menu o-- ComponenteMenu
+ComponenteMenu --> Producto
+Pedido o-- ItemVenta
+Pedido o-- Pago
+Pedido --> Cliente
+Canje --> Cliente
+Canje --> Recompensa
+Producto --> Categoria
+Producto --> EstadoRegistro
+Menu --> EstadoRegistro
+Recompensa --> EstadoRegistro
+Pedido --> EstadoPedido
+Pago --> TipoPago
+Pago --> EstadoPago
+Cliente --> EstadoRegistro
+ItemVenta --> TipoItem
+
+@enduml
